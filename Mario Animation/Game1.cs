@@ -23,6 +23,11 @@ namespace Mario_Animation
         Screen screen;
         float stateTimer = 0f;
 
+        Vector2 marioPosition = new Vector2(100, 430);
+        float velocityY = 0f;
+        bool isJumping = false;
+        bool hasJumped = false;
+
         //Background
         Rectangle backgroundRect;
         Texture2D backgroundTexture;
@@ -69,51 +74,84 @@ namespace Mario_Animation
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
+       || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
-            time += (float)gameTime.ElapsedGameTime.TotalSeconds;
-            stateTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            time += dt;
+            stateTimer += dt;
 
             // screen flow
             if (screen == Screen.Intro && stateTimer > 1.5f)
             {
                 screen = Screen.Mario;
                 stateTimer = 0f;
-                frame = 2; // start running (walk1)
+                frame = 2;
             }
             else if (screen == Screen.Mario && stateTimer > 2.5f)
             {
                 screen = Screen.End;
-                frame = 0; // back to idle
+                frame = 0;
             }
 
-            // animation timing
+            // ======================
+            // MARIO MOVEMENT LOGIC
+            // ======================
+            if (screen == Screen.Mario)
+            {
+                // walk forward only before jump
+                if (stateTimer < 1.8f)
+                {
+                    marioPosition.X += 150f * dt;
+                }
+
+                // jump once
+                if (stateTimer > 1.8f && !hasJumped)
+                {
+                    velocityY = -250f;
+                    isJumping = true;
+                    hasJumped = true;
+                }
+
+                // gravity
+                velocityY += 500f * dt;
+                marioPosition.Y += velocityY * dt;
+
+                // floor collision
+                if (marioPosition.Y >= 430)
+                {
+                    marioPosition.Y = 430;
+                    velocityY = 0f;
+                    isJumping = false;
+                }
+            }
+
+            //Animations
             if (time > frameSpeed)
             {
                 time = 0f;
 
                 if (screen == Screen.Mario)
                 {
-                    // first part = running
                     if (stateTimer < 1.8f)
                     {
                         frame++;
-                        if (frame > 4) // loop walk1–3
+                        if (frame > 4)
                             frame = 2;
                     }
                     else
                     {
-                        // jump at the end
-                        frame = 1;
+                        frame = 1; // jump frame
                     }
                 }
-                else if (screen == Screen.Intro || screen == Screen.End)
+                else
                 {
-                    frame = 0; // idle
+                    frame = 0;
                 }
             }
+
             base.Update(gameTime);
         }
 
@@ -121,26 +159,14 @@ namespace Mario_Animation
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-            _spriteBatch.Begin(SpriteSortMode.Deferred,BlendState.AlphaBlend,SamplerState.PointClamp);
-
-            Vector2 position = new Vector2(100, 300);
+            // background
             _spriteBatch.Draw(backgroundTexture, backgroundRect, Color.White);
-            if (screen == Screen.Mario)
-            {
-               
-                // move right while running
-                position.X += stateTimer * 80f;
 
-                // small jump near the end
-                if (stateTimer > 1.8f)
-                {
-                    position.Y -= 50f;
-                }
-            }
-
-            float scale = 3f; 
+            // draw mario ONLY (no logic here)
+            Vector2 position = marioPosition;
+            float scale = 3f;
 
             _spriteBatch.Draw(
                 marioFrames[frame],
