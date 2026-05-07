@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace Mario_Animation
@@ -8,7 +9,8 @@ namespace Mario_Animation
     enum Screen
     {
         Intro,
-        Mario,
+        MarioCoin,
+        MarioGoomba,
         End
     }
     public class Game1 : Game
@@ -16,8 +18,8 @@ namespace Mario_Animation
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         Rectangle window;
-
-        int frame = 0;
+        Random randNum = new Random();
+        int frame_count_mario = 0;
         float time = 0f;
         float frameSpeed = 0.15f;
         Screen screen;
@@ -28,11 +30,18 @@ namespace Mario_Animation
         bool isJumping = false;
         bool hasJumped = false;
 
+        
         //Background
         Rectangle backgroundRect;
         Texture2D backgroundTexture;
 
+        int randomScene;
+
         List<Texture2D> marioFrames = new List<Texture2D>();
+        
+        Vector2 goombaPosition = new Vector2(200, 430);
+        int frame_count_goomba = 0;
+        List<Texture2D> goombaFrames = new List<Texture2D>();
 
         public Game1()
         {
@@ -51,6 +60,8 @@ namespace Mario_Animation
 
             // TODO: Add your initialization logic here
             screen = Screen.Intro;
+
+            randomScene = randNum.Next(0,2);
             base.Initialize();
         }
 
@@ -64,6 +75,11 @@ namespace Mario_Animation
             marioFrames.Add(Content.Load<Texture2D>("mario_walk1"));
             marioFrames.Add(Content.Load<Texture2D>("mario_walk2"));
             marioFrames.Add(Content.Load<Texture2D>("mario_walk3"));
+
+            goombaFrames.Add(Content.Load<Texture2D>("Goomba_walk1"));
+            goombaFrames.Add(Content.Load<Texture2D>("Goomba_walk2"));
+
+
 
             // Background
             backgroundTexture = Content.Load<Texture2D>("mario_background");
@@ -83,75 +99,128 @@ namespace Mario_Animation
             time += dt;
             stateTimer += dt;
 
-            // screen flow
-            if (screen == Screen.Intro && stateTimer > 1.5f)
+
+            if (randomScene == 1)
             {
-                screen = Screen.Mario;
-                stateTimer = 0f;
-                frame = 2;
-            }
-            else if (screen == Screen.Mario && stateTimer > 2.5f)
-            {
-                screen = Screen.End;
-                frame = 0;
-            }
 
-            // ======================
-            // MARIO MOVEMENT LOGIC
-            // ======================
-            if (screen == Screen.Mario)
-            {
-                // walk forward only before jump
-                if (stateTimer < 1.8f)
+
+                //Screen
+                //Intro
+                if (screen == Screen.Intro && stateTimer > 1.5f)
                 {
-                    marioPosition.X += 150f * dt;
-                }
+                    stateTimer = 0f;
 
-                // jump once
-                if (stateTimer > 1.8f && !hasJumped)
-                {
-                    velocityY = -250f;
-                    isJumping = true;
-                    hasJumped = true;
-                }
-
-                // gravity
-                velocityY += 500f * dt;
-                marioPosition.Y += velocityY * dt;
-
-                // floor collision
-                if (marioPosition.Y >= 430)
-                {
-                    marioPosition.Y = 430;
-                    velocityY = 0f;
-                    isJumping = false;
-                }
-            }
-
-            //Animations
-            if (time > frameSpeed)
-            {
-                time = 0f;
-
-                if (screen == Screen.Mario)
-                {
-                    if (stateTimer < 1.8f)
+                    if (randomScene == 0)
                     {
-                        frame++;
-                        if (frame > 4)
-                            frame = 2;
+                        screen = Screen.MarioCoin;
                     }
                     else
                     {
-                        frame = 1; // jump frame
+                        screen = Screen.MarioGoomba;
                     }
+
+                    frame_count_mario = 2;
+                }
+
+                //End
+                if ((screen == Screen.MarioCoin || screen == Screen.MarioGoomba)
+                    && stateTimer > 2.5f)
+                {
+                    screen = Screen.End;
+
+                    frame_count_mario = 0;
+                    frame_count_goomba = 0;
+                }
+
+                //Goomba
+                if (screen == Screen.MarioGoomba)
+                {
+                    // Mario walks toward Goomba
+                    marioPosition.X += 120f * dt;
+
+                    // Goomba walks toward Mario
+                    goombaPosition.X -= 60f * dt;
+
+                    // Animate Goomba
+                    if (time > frameSpeed)
+                    {
+                        frame_count_goomba++;
+
+                        if (frame_count_goomba > 1)
+                            frame_count_goomba = 0;
+                    }
+                }
+                //Reset Screens
+                if (randomScene == 0)
+                {
+                    screen = Screen.MarioCoin;
+
+                    marioPosition = new Vector2(100, 430);
                 }
                 else
                 {
-                    frame = 0;
+                    screen = Screen.MarioGoomba;
+
+                    marioPosition = new Vector2(100, 430);
+                    goombaPosition = new Vector2(600, 430);
+                }
+
+
+
+                //Movement
+                if (screen == Screen.MarioCoin)
+                {
+                    //Walking
+                    if (stateTimer < 1.8f)
+                    {
+                        marioPosition.X += 150f * dt;
+                    }
+
+                    //Jump
+                    if (stateTimer > 1.8f && !hasJumped)
+                    {
+                        velocityY = -250f;
+                        isJumping = true;
+                        hasJumped = true;
+                    }
+
+                    //Gravity
+                    velocityY += 500f * dt;
+                    marioPosition.Y += velocityY * dt;
+
+                    //Floor collision
+                    if (marioPosition.Y >= 430)
+                    {
+                        marioPosition.Y = 430;
+                        velocityY = 0f;
+                        isJumping = false;
+                    }
+                }
+
+                //Animations
+                if (time > frameSpeed)
+                {
+                    time = 0f;
+
+                    if (screen == Screen.MarioCoin)
+                    {
+                        if (stateTimer < 1.8f)
+                        {
+                            frame_count_mario++;
+                            if (frame_count_mario > 4)
+                                frame_count_mario = 2;
+                        }
+                        else
+                        {
+                            frame_count_mario = 1;
+                        }
+                    }
+                    else
+                    {
+                        frame_count_mario = 0;
+                    }
                 }
             }
-
             base.Update(gameTime);
         }
 
@@ -161,24 +230,14 @@ namespace Mario_Animation
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-            // background
+            // Background
             _spriteBatch.Draw(backgroundTexture, backgroundRect, Color.White);
 
-            // draw mario ONLY (no logic here)
+            //Drawing Mario
             Vector2 position = marioPosition;
             float scale = 3f;
 
-            _spriteBatch.Draw(
-                marioFrames[frame],
-                position,
-                null,
-                Color.White,
-                0f,
-                Vector2.Zero,
-                scale,
-                SpriteEffects.None,
-                0f
-            );
+            _spriteBatch.Draw(marioFrames[frame_count_mario], position, null, Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
 
             _spriteBatch.End();
 
