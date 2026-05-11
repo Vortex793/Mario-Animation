@@ -204,13 +204,6 @@ namespace Mario_Animation
                 // Goomba walks left
                 goombaPosition.X -= 60f * dt;
 
-                // Mario jumps too early
-                if (marioPosition.X >= 320 && !hasJumped)
-                {
-                    velocityY = -300f;
-
-                    hasJumped = true;
-                }
 
                 // Gravity
                 velocityY += 500f * dt;
@@ -225,12 +218,12 @@ namespace Mario_Animation
                     velocityY = 0f;
                 }
 
-                // Mario gets defeated
-                if (hasJumped && marioPosition.Y >= 430 && marioPosition.X >= goombaPosition.X - 30)
+                // Mario gets defeated when touching Goomba
+                if (marioPosition.X >= goombaPosition.X - 30)
                 {
-                    marioPosition.X -= 180f * dt;
+                    frame_count_mario = 5; // death frame
 
-                    frame_count_mario = 0;
+                    marioPosition.X -= 180f * dt; // knockback
                 }
 
                 // Goomba animation
@@ -288,10 +281,9 @@ namespace Mario_Animation
                     }
 
                     // Death frame
-                    else if (marioPosition.Y >= 430
-                        && marioPosition.X >= goombaPosition.X - 30)
+                    else if (marioPosition.X >= goombaPosition.X - 30)
                     {
-                        frame_count_mario = 4;
+                        frame_count_mario = 5;
                     }
 
                     // Jump frame
