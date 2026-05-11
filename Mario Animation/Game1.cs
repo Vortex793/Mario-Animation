@@ -42,17 +42,20 @@ namespace Mario_Animation
         bool isJumping = false;
         bool hasJumped = false;
 
-        // Goomba
+        //Goomba
         Vector2 goombaPosition = new Vector2(600, 500);
 
-        // Background
+        //Background
         Rectangle backgroundRect;
         Texture2D backgroundTexture;
 
-        // Mario Frames
+        //Mario Frames
         List<Texture2D> marioFrames = new List<Texture2D>();
 
-        // Goomba Frames
+        //Small Mario Frames
+        List<Texture2D> smallMarioFrames = new List<Texture2D>();
+
+        //Goomba Frames
         List<Texture2D> goombaFrames = new List<Texture2D>();
 
         public Game1()
@@ -94,6 +97,13 @@ namespace Mario_Animation
             // Goomba
             goombaFrames.Add(Content.Load<Texture2D>("Goomba_walk1"));
             goombaFrames.Add(Content.Load<Texture2D>("Goomba_walk2"));
+
+            //Small Mario
+            smallMarioFrames.Add(Content.Load<Texture2D>("small_mario_idle"));
+            smallMarioFrames.Add(Content.Load<Texture2D>("small_mario_walk1"));
+            smallMarioFrames.Add(Content.Load<Texture2D>("small_mario_walk2"));
+            smallMarioFrames.Add(Content.Load<Texture2D>("small_mario_walk3"));
+            smallMarioFrames.Add(Content.Load<Texture2D>("small_mario_death"));
 
             // Background
             backgroundTexture = Content.Load<Texture2D>("mario_background");
@@ -266,18 +276,28 @@ namespace Mario_Animation
 
                 else if (screen == Screen.MarioGoomba)
                 {
+                    // Walking animation
                     if (!hasJumped)
                     {
                         frame_count_mario++;
 
-                        if (frame_count_mario > 4)
+                        if (frame_count_mario > 3)
                         {
-                            frame_count_mario = 2;
+                            frame_count_mario = 1;
                         }
                     }
+
+                    // Death frame
+                    else if (marioPosition.Y >= 430
+                        && marioPosition.X >= goombaPosition.X - 30)
+                    {
+                        frame_count_mario = 4;
+                    }
+
+                    // Jump frame
                     else
                     {
-                        frame_count_mario = 1;
+                        frame_count_mario = 0;
                     }
                 }
 
@@ -299,8 +319,38 @@ namespace Mario_Animation
             //Background
             _spriteBatch.Draw(backgroundTexture, backgroundRect, Color.White);
 
-            //Mario
-            _spriteBatch.Draw(marioFrames[frame_count_mario], marioPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
+            // Big Mario
+            if (screen == Screen.MarioCoin)
+            {
+                _spriteBatch.Draw(
+                    marioFrames[frame_count_mario],
+                    marioPosition,
+                    null,
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    3f,
+                    SpriteEffects.None,
+                    0f);
+            }
+
+            // Small Mario
+            if (screen == Screen.MarioGoomba)
+            {
+                Vector2 smallMarioDrawPosition =
+                    new Vector2(marioPosition.X, marioPosition.Y + 48);
+
+                _spriteBatch.Draw(
+                    smallMarioFrames[frame_count_mario],
+                    smallMarioDrawPosition,
+                    null,
+                    Color.White,
+                    0f,
+                    Vector2.Zero,
+                    3f,
+                    SpriteEffects.None,
+                    0f);
+            }
 
             //Goomba
             if (screen == Screen.MarioGoomba)
