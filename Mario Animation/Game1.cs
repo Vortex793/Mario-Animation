@@ -42,6 +42,8 @@ namespace Mario_Animation
         bool isJumping = false;
         bool hasJumped = false;
         bool marioDefeated = false;
+        bool coinVisible = false;
+        float coinTimer = 0f;
 
         //Goomba
         Vector2 goombaPosition = new Vector2(600, 500);
@@ -201,6 +203,20 @@ namespace Mario_Animation
                     isJumping = true;
 
                     hasJumped = true;
+
+                    coinVisible = true;
+                    coinTimer = 0.80f; // 1 second
+                }
+
+                //Coin Timer
+                if (coinVisible)
+                {
+                    coinTimer -= dt;
+
+                    if (coinTimer <= 0f)
+                    {
+                        coinVisible = false;
+                    }
                 }
 
                 // Gravity
@@ -365,10 +381,11 @@ namespace Mario_Animation
                     3f,
                     SpriteEffects.None,
                     0f);
-                if (hasJumped)
+                if (coinVisible)
                 {
                     // Coin
-                    _spriteBatch.Draw(coin, , null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
+                    _spriteBatch.Draw(coin, new Rectangle(510, 320, 30, 30), Color.White);
+
                 }
             }
 
