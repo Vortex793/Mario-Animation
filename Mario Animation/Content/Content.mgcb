@@ -13,6 +13,18 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin 01. Ground Theme.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:01. Ground Theme.wav;theme.wav
+
+#begin 08. Lost A Life Theme.wav
+/importer:WavImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:08. Lost A Life Theme.wav;death.wav
+
 #begin Goomba_walk1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -120,6 +132,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:marioCoin.png
+
+#begin marioThumbUp.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:marioThumbUp.png
 
 #begin small_mario_death.png
 /importer:TextureImporter

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 
@@ -39,6 +40,7 @@ namespace Mario_Animation
 
         float velocityY = 0f;
 
+        bool musicStarted = false;
         bool isJumping = false;
         bool hasJumped = false;
         bool marioDefeated = false;
@@ -71,6 +73,11 @@ namespace Mario_Animation
 
         //Goomba Frames
         List<Texture2D> goombaFrames = new List<Texture2D>();
+
+        //Thumb
+        Texture2D marioThumbUp;
+
+        Song backgroundMusic;
 
         public Game1()
         {
@@ -134,7 +141,11 @@ namespace Mario_Animation
             gameOverTexture = Content.Load<Texture2D>("SMBGameOver");
             gameOverRect = new Rectangle(0, 0, 800, 600);
 
-            
+            //Thumb
+            marioThumbUp = Content.Load<Texture2D>("marioThumbUp");
+
+            //Music
+            backgroundMusic = Content.Load<Song>("Theme");
         }
 
         protected override void Update(GameTime gameTime)
@@ -153,32 +164,38 @@ namespace Mario_Animation
             // Intro
             if (screen == Screen.Intro && stateTimer > 1.5f)
             {
-                stateTimer = 0f;
+                KeyboardState keyboard = Keyboard.GetState();
 
-                if (randomScene == 1)
+                if (keyboard.IsKeyDown(Keys.Enter))
                 {
-                    screen = Screen.MarioCoin;
+                    stateTimer = 0f;
+
+                    if (randomScene == 1)
+                    {
+                        screen = Screen.MarioCoin;
+                    }
+                    else if (randomScene == 2)
+                    {
+                        screen = Screen.MarioGoomba;
+                    }
+
+                    marioPosition = new Vector2(232, 430);
+
+                    goombaPosition = new Vector2(600, 475);
+
+                    velocityY = 0f;
+
+                    hasJumped = false;
+
+                    frame_count_mario = 2;
                 }
-                else if (randomScene == 2)
-                {
-                    screen = Screen.MarioGoomba;
-                }
-
-                marioPosition = new Vector2(232, 430);
-
-                goombaPosition = new Vector2(600, 475);
-
-                velocityY = 0f;
-
-                hasJumped = false;
-
-                frame_count_mario = 2;
             }
 
             // End
             if ((screen == Screen.MarioCoin || screen == Screen.MarioGoomba)
                 && stateTimer > 4f)
             {
+              
                 screen = Screen.End;
 
                 frame_count_mario = 0;
@@ -189,6 +206,13 @@ namespace Mario_Animation
             //Mario Coin
             if (screen == Screen.MarioCoin)
             {
+                if (!musicStarted)
+                {
+                    MediaPlayer.Play(backgroundMusic);
+                    MediaPlayer.IsRepeating = true;
+                    musicStarted = true;
+                }
+
                 // Walking
                 if (stateTimer < 1.8f)
                 {
@@ -371,21 +395,55 @@ namespace Mario_Animation
             // Big Mario
             if (screen == Screen.MarioCoin)
             {
-                _spriteBatch.Draw(
-                    marioFrames[frame_count_mario],
-                    marioPosition,
-                    null,
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3f,
-                    SpriteEffects.None,
-                    0f);
+                // Normal Mario before coin ends
                 if (coinVisible)
                 {
-                    // Coin
-                    _spriteBatch.Draw(coin, new Rectangle(510, 320, 30, 30), Color.White);
+                    _spriteBatch.Draw(
+                        marioFrames[frame_count_mario],
+                        marioPosition,
+                        null,
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        3f,
+                        SpriteEffects.None,
+                        0f);
 
+                    // Coin
+                    _spriteBatch.Draw(
+                        coin,
+                        new Rectangle(510, 320, 30, 30),
+                        Color.White);
+                }
+
+                // Thumb up Mario after getting coin
+                else if (hasJumped)
+                {
+                    _spriteBatch.Draw(
+                        marioThumbUp,
+                        marioPosition,
+                        null,
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        3f,
+                        SpriteEffects.None,
+                        0f);
+                }
+
+                // Before jump
+                else
+                {
+                    _spriteBatch.Draw(
+                        marioFrames[frame_count_mario],
+                        marioPosition,
+                        null,
+                        Color.White,
+                        0f,
+                        Vector2.Zero,
+                        3f,
+                        SpriteEffects.None,
+                        0f);
                 }
             }
 
