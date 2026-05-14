@@ -25,6 +25,13 @@
 /processorParam:Quality=Best
 /build:08. Lost A Life Theme.wav;death.wav
 
+#begin File.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:File.spritefont;marioFont.spritefont
+
 #begin Goomba_walk1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -216,6 +223,11 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:SMBGameOver.png
+
+#begin Super Mario Bros. NES.ttf
+/importer:
+/processor:
+/build:Super Mario Bros. NES.ttf
 
 #begin Super_Mario_Bros_Title.png
 /importer:TextureImporter

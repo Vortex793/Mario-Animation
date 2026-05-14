@@ -77,6 +77,9 @@ namespace Mario_Animation
         //Thumb
         Texture2D marioThumbUp;
 
+        //Font
+        SpriteFont eightBitFont;
+        //Audio
         Song backgroundMusic;
 
         public Game1()
@@ -146,6 +149,10 @@ namespace Mario_Animation
 
             //Music
             backgroundMusic = Content.Load<Song>("Theme");
+            deathMusic = Content.Load<Song>("Death");
+
+            //Font
+            eightBitFont = Content.Load<SpriteFont>("File");
         }
 
         protected override void Update(GameTime gameTime)
