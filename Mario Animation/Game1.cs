@@ -80,7 +80,7 @@ namespace Mario_Animation
         //Font
         SpriteFont eightBitFont;
         //Audio
-        Song backgroundMusic;
+        Song backgroundMusic, deathMusic;
 
         public Game1()
         {
@@ -149,10 +149,10 @@ namespace Mario_Animation
 
             //Music
             backgroundMusic = Content.Load<Song>("Theme");
-            deathMusic = Content.Load<Song>("Death");
+            deathMusic = Content.Load<Song>("death");
 
             //Font
-            eightBitFont = Content.Load<SpriteFont>("File");
+            //eightBitFont = Content.Load<SpriteFont>("File");
         }
 
         protected override void Update(GameTime gameTime)
@@ -268,13 +268,13 @@ namespace Mario_Animation
 
             if (screen == Screen.MarioGoomba)
             {
-                // Only move if Mario is alive
+                //Mario Animation
                 if (!marioDefeated)
                 {
-                    // Mario walks right
+                    //Mario
                     marioPosition.X += 120f * dt;
 
-                    // Goomba walks left
+                    //Goomba
                     goombaPosition.X -= 60f * dt;
                 }
 
@@ -392,11 +392,9 @@ namespace Mario_Animation
                 _spriteBatch.Draw(backgroundTexture, backgroundRect, Color.White);
             }
                 
-
+            //Game Over
             if (screen == Screen.End)
             {
-                // Game Over
-              
                 _spriteBatch.Draw(gameOverTexture, gameOverRect, Color.White);
             }
             // Big Mario
@@ -406,71 +404,33 @@ namespace Mario_Animation
                 if (coinVisible)
                 {
                     _spriteBatch.Draw(
-                        marioFrames[frame_count_mario],
-                        marioPosition,
-                        null,
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        3f,
-                        SpriteEffects.None,
-                        0f);
+                        marioFrames[frame_count_mario], marioPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
 
                     // Coin
-                    _spriteBatch.Draw(
-                        coin,
-                        new Rectangle(510, 320, 30, 30),
-                        Color.White);
+                    _spriteBatch.Draw(coin, new Rectangle(510, 320, 30, 30), Color.White);
                 }
 
-                // Thumb up Mario after getting coin
+                //Mario thumbs up
                 else if (hasJumped)
                 {
-                    _spriteBatch.Draw(
-                        marioThumbUp,
-                        marioPosition,
-                        null,
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        3f,
-                        SpriteEffects.None,
-                        0f);
+                    _spriteBatch.Draw(marioThumbUp, marioPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
                 }
 
                 // Before jump
                 else
                 {
-                    _spriteBatch.Draw(
-                        marioFrames[frame_count_mario],
-                        marioPosition,
-                        null,
-                        Color.White,
-                        0f,
-                        Vector2.Zero,
-                        3f,
-                        SpriteEffects.None,
-                        0f);
+                    _spriteBatch.Draw(marioFrames[frame_count_mario], marioPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
                 }
             }
 
             // Small Mario
             if (screen == Screen.MarioGoomba)
             {
-                Vector2 smallMarioDrawPosition =
-                    new Vector2(marioPosition.X, marioPosition.Y + 48);
+                Vector2 smallMarioDrawPosition = new Vector2(marioPosition.X, marioPosition.Y + 48);
 
-                _spriteBatch.Draw(
-                    smallMarioFrames[frame_count_mario],
-                    smallMarioDrawPosition,
-                    null,
-                    Color.White,
-                    0f,
-                    Vector2.Zero,
-                    3f,
-                    SpriteEffects.None,
-                    0f);
+                _spriteBatch.Draw(smallMarioFrames[frame_count_mario], smallMarioDrawPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
             }
+
 
             //Goomba
             if (screen == Screen.MarioGoomba)

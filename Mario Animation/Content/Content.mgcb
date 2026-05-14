@@ -224,11 +224,6 @@
 /processorParam:TextureFormat=Color
 /build:SMBGameOver.png
 
-#begin Super Mario Bros. NES.ttf
-/importer:
-/processor:
-/build:Super Mario Bros. NES.ttf
-
 #begin Super_Mario_Bros_Title.png
 /importer:TextureImporter
 /processor:TextureProcessor
