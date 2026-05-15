@@ -81,6 +81,8 @@ namespace Mario_Animation
         SpriteFont eightBitFont;
         //Audio
         Song backgroundMusic, deathMusic;
+        
+
 
         public Game1()
         {
@@ -299,6 +301,12 @@ namespace Mario_Animation
                     frame_count_mario = 4;
 
                     velocityY = -250f;
+                    if (!musicStarted)
+                    {
+                        MediaPlayer.Play(deathMusic);
+                        MediaPlayer.IsRepeating = true;
+                        musicStarted = true;
+                    }
                 }
 
                 // Goomba animation freezes after death
@@ -347,7 +355,7 @@ namespace Mario_Animation
 
                 else if (screen == Screen.MarioGoomba)
                 {
-                    // Walking animation
+                    //Walk
                     if (!hasJumped)
                     {
                         frame_count_mario++;
@@ -381,9 +389,11 @@ namespace Mario_Animation
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+
+            //Title Screen
             if (screen == Screen.Intro)
             {
-                // Title
+              
                 _spriteBatch.Draw(titleTexture, titleRect, Color.White);
             }
             //Background
@@ -392,11 +402,7 @@ namespace Mario_Animation
                 _spriteBatch.Draw(backgroundTexture, backgroundRect, Color.White);
             }
                 
-            //Game Over
-            if (screen == Screen.End)
-            {
-                _spriteBatch.Draw(gameOverTexture, gameOverRect, Color.White);
-            }
+
             // Big Mario
             if (screen == Screen.MarioCoin)
             {
@@ -436,6 +442,12 @@ namespace Mario_Animation
             if (screen == Screen.MarioGoomba)
             {
                 _spriteBatch.Draw(goombaFrames[frame_count_goomba], goombaPosition, null, Color.White, 0f, Vector2.Zero, 0.3f, SpriteEffects.None, 0f);
+            }
+
+            //Game Over
+            if (screen == Screen.End)
+            {
+                _spriteBatch.Draw(gameOverTexture, gameOverRect, Color.White);
             }
 
             _spriteBatch.End();
