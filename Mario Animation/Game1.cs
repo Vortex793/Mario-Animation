@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
+using System.Transactions;
 
 namespace Mario_Animation
 {
@@ -78,9 +80,11 @@ namespace Mario_Animation
         Texture2D marioThumbUp;
 
         //Font
-        SpriteFont eightBitFont;
+      
         //Audio
-        Song backgroundMusic, deathMusic;
+        SoundEffect backgroundMusic, deathMusic;
+
+        SoundEffectInstance deathInstance;
         
 
 
@@ -150,8 +154,10 @@ namespace Mario_Animation
             marioThumbUp = Content.Load<Texture2D>("marioThumbUp");
 
             //Music
-            backgroundMusic = Content.Load<Song>("Theme");
-            deathMusic = Content.Load<Song>("death");
+            backgroundMusic = Content.Load<SoundEffect>("01. Ground Theme");
+            deathMusic = Content.Load<SoundEffect>("death");
+            deathInstance = deathMusic.CreateInstance();
+            deathInstance.IsLooped = false;
 
             //Font
             //eightBitFont = Content.Load<SpriteFont>("File");
@@ -215,19 +221,14 @@ namespace Mario_Animation
             //Mario Coin
             if (screen == Screen.MarioCoin)
             {
-                if (!musicStarted)
-                {
-                    MediaPlayer.Play(backgroundMusic);
-                    MediaPlayer.IsRepeating = true;
-                    musicStarted = true;
-                }
+                
 
                 // Walking
                 if (stateTimer < 1.8f)
                 {
                     marioPosition.X += 150f * dt;
                 }
-
+                
                 // Jump
                 if (stateTimer > 1.8f && !hasJumped)
                 {
@@ -270,17 +271,17 @@ namespace Mario_Animation
 
             if (screen == Screen.MarioGoomba)
             {
-                //Mario Animation
+                //Mario and Goomba Animation
                 if (!marioDefeated)
                 {
-                    //Mario
+                    
                     marioPosition.X += 120f * dt;
 
-                    //Goomba
+                    
                     goombaPosition.X -= 60f * dt;
                 }
 
-                // Gravity
+                //Gravity
                 velocityY += 500f * dt;
 
                 marioPosition.Y += velocityY * dt;
@@ -293,7 +294,7 @@ namespace Mario_Animation
                     velocityY = 0f;
                 }
 
-                // Mario gets defeated when touching Goomba
+                //Mario Death
                 if (marioPosition.X >= goombaPosition.X - 30 && !marioDefeated)
                 {
                     marioDefeated = true;
@@ -301,12 +302,8 @@ namespace Mario_Animation
                     frame_count_mario = 4;
 
                     velocityY = -250f;
-                    if (!musicStarted)
-                    {
-                        MediaPlayer.Play(deathMusic);
-                        MediaPlayer.IsRepeating = true;
-                        musicStarted = true;
-                    }
+
+                    deathInstance.Play();
                 }
 
                 // Goomba animation freezes after death
