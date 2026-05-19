@@ -49,6 +49,9 @@ namespace Mario_Animation
         bool coinVisible = false;
         float coinTimer = 0f;
 
+        float deathTimer = 0f;
+        bool gameOverMusicPlayed = false;
+
         //Goomba
         Vector2 goombaPosition = new Vector2(600, 500);
 
@@ -82,9 +85,9 @@ namespace Mario_Animation
         //Font
       
         //Audio
-        SoundEffect backgroundMusic, deathMusic;
+        SoundEffect backgroundMusic, deathMusic, coinSound, gameOverMusic;
 
-        SoundEffectInstance deathInstance;
+        SoundEffectInstance backgroundInstance, deathInstance, coinInstance, gameOverInstance;
         
 
 
@@ -155,9 +158,22 @@ namespace Mario_Animation
 
             //Music
             backgroundMusic = Content.Load<SoundEffect>("01. Ground Theme");
+            backgroundInstance = backgroundMusic.CreateInstance();
+            backgroundInstance.IsLooped = false;
+
             deathMusic = Content.Load<SoundEffect>("death");
             deathInstance = deathMusic.CreateInstance();
             deathInstance.IsLooped = false;
+
+            coinSound = Content.Load<SoundEffect>("Mario Coin Sound - Sound Effect (HD)");
+            coinInstance = coinSound.CreateInstance();
+            coinInstance.IsLooped = false;
+
+            gameOverMusic = Content.Load<SoundEffect>("09. Game Over Theme");
+            gameOverInstance = gameOverMusic.CreateInstance();
+            gameOverInstance.IsLooped = false;
+
+
 
             //Font
             //eightBitFont = Content.Load<SpriteFont>("File");
@@ -206,7 +222,7 @@ namespace Mario_Animation
                 }
             }
 
-            // End
+            //End
             if ((screen == Screen.MarioCoin || screen == Screen.MarioGoomba)
                 && stateTimer > 4f)
             {
@@ -218,18 +234,19 @@ namespace Mario_Animation
                 frame_count_goomba = 0;
             }
 
+
             //Mario Coin
             if (screen == Screen.MarioCoin)
             {
-                
+                backgroundInstance.Play();
 
-                // Walking
+                //Walk animation
                 if (stateTimer < 1.8f)
                 {
                     marioPosition.X += 150f * dt;
                 }
                 
-                // Jump
+                //jump
                 if (stateTimer > 1.8f && !hasJumped)
                 {
                     velocityY = -250f;
@@ -246,7 +263,7 @@ namespace Mario_Animation
                 if (coinVisible)
                 {
                     coinTimer -= dt;
-
+                    coinInstance.Play();
                     if (coinTimer <= 0f)
                     {
                         coinVisible = false;
@@ -269,8 +286,15 @@ namespace Mario_Animation
                 }
             }
 
+            //Mario Goomba
             if (screen == Screen.MarioGoomba)
             {
+                if (backgroundInstance.State != SoundState.Playing && !marioDefeated)
+                {
+                    backgroundInstance.Play();
+                }
+                   
+
                 //Mario and Goomba Animation
                 if (!marioDefeated)
                 {
@@ -303,10 +327,25 @@ namespace Mario_Animation
 
                     velocityY = -250f;
 
+                    backgroundInstance.Stop();
+
                     deathInstance.Play();
+
+                    deathTimer = 0f;
                 }
 
-                // Goomba animation freezes after death
+                if (marioDefeated)
+                {
+                    deathTimer += dt;
+
+                    if (deathTimer >= 1.5f && !gameOverMusicPlayed)
+                    {
+                        gameOverInstance.Play();
+                        gameOverMusicPlayed = true;
+                    }
+                }
+
+                //Goomba idle
                 if (!marioDefeated)
                 {
                     if (time > frameSpeed)
@@ -368,7 +407,7 @@ namespace Mario_Animation
                     {
                         frame_count_mario = 4;
                     }
-
+     
 
                 }
 

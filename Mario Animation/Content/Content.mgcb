@@ -25,6 +25,12 @@
 /processorParam:Quality=Best
 /build:08. Lost A Life Theme.wav;death.wav
 
+#begin 09. Game Over Theme.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:09. Game Over Theme.mp3
+
 #begin Goomba_walk1.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -48,6 +54,12 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:Goomba_walk2.png
+
+#begin Mario Coin Sound - Sound Effect (HD).mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Mario Coin Sound - Sound Effect (HD).mp3
 
 #begin mario_background.png
 /importer:TextureImporter
