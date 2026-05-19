@@ -83,7 +83,7 @@ namespace Mario_Animation
         Texture2D marioThumbUp;
 
         //Font
-      
+        SpriteFont retroFont;
         //Audio
         SoundEffect backgroundMusic, deathMusic, coinSound, gameOverMusic;
 
@@ -176,7 +176,7 @@ namespace Mario_Animation
 
 
             //Font
-            //eightBitFont = Content.Load<SpriteFont>("File");
+            retroFont = Content.Load<SpriteFont>("8 bit font");
         }
 
         protected override void Update(GameTime gameTime)
@@ -486,6 +486,7 @@ namespace Mario_Animation
                 _spriteBatch.Draw(gameOverTexture, gameOverRect, Color.White);
             }
 
+            _spriteBatch.DrawString(retroFont, "Press enter to start!", new Vector2(250, 550), Color.White);
             _spriteBatch.End();
 
             base.Draw(gameTime);
