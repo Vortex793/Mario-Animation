@@ -9,6 +9,7 @@ using System.Transactions;
 
 namespace Mario_Animation
 {
+    //Curtis Apfelbeck
     enum Screen
     {
         Intro,
@@ -72,6 +73,7 @@ namespace Mario_Animation
 
         //Mario Frames
         List<Texture2D> marioFrames = new List<Texture2D>();
+        Texture2D marioThumbUp;
 
         //Small Mario Frames
         List<Texture2D> smallMarioFrames = new List<Texture2D>();
@@ -79,8 +81,7 @@ namespace Mario_Animation
         //Goomba Frames
         List<Texture2D> goombaFrames = new List<Texture2D>();
 
-        //Thumb
-        Texture2D marioThumbUp;
+        
 
         //Font
         SpriteFont retroFont;
@@ -192,7 +193,7 @@ namespace Mario_Animation
             time += dt;
             stateTimer += dt;
 
-            // Intro
+            // intro
             if (screen == Screen.Intro && stateTimer > 1.5f)
             {
                 KeyboardState keyboard = Keyboard.GetState();
@@ -235,7 +236,7 @@ namespace Mario_Animation
             }
 
 
-            //Mario Coin
+            //Mario coin
             if (screen == Screen.MarioCoin)
             {
                 backgroundInstance.Play();
@@ -270,12 +271,11 @@ namespace Mario_Animation
                     }
                 }
 
-                // Gravity
-                velocityY += 500f * dt;
 
+                velocityY += 500f * dt;
                 marioPosition.Y += velocityY * dt;
 
-                // Floor Collision
+    
                 if (marioPosition.Y >= 430)
                 {
                     marioPosition.Y = 430;
@@ -310,7 +310,7 @@ namespace Mario_Animation
 
                 marioPosition.Y += velocityY * dt;
 
-                // Floor collision only before death
+      
                 if (marioPosition.Y >= 430 && !marioDefeated)
                 {
                     marioPosition.Y = 430;
@@ -431,6 +431,7 @@ namespace Mario_Animation
             {
               
                 _spriteBatch.Draw(titleTexture, titleRect, Color.White);
+                _spriteBatch.DrawString(retroFont, "Press enter to start!", new Vector2(250, 420), Color.White);
             }
             //Background
             if (screen == Screen.MarioCoin || screen == Screen.MarioGoomba)
@@ -438,27 +439,18 @@ namespace Mario_Animation
                 _spriteBatch.Draw(backgroundTexture, backgroundRect, Color.White);
             }
                 
-
             // Big Mario
             if (screen == Screen.MarioCoin)
             {
-                // Normal Mario before coin ends
                 if (coinVisible)
                 {
-                    _spriteBatch.Draw(
-                        marioFrames[frame_count_mario], marioPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
-
-                    // Coin
+                    _spriteBatch.Draw(marioFrames[frame_count_mario], marioPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
                     _spriteBatch.Draw(coin, new Rectangle(510, 320, 30, 30), Color.White);
                 }
-
-                //Mario thumbs up
                 else if (hasJumped)
                 {
                     _spriteBatch.Draw(marioThumbUp, marioPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
                 }
-
-                // Before jump
                 else
                 {
                     _spriteBatch.Draw(marioFrames[frame_count_mario], marioPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
@@ -473,20 +465,19 @@ namespace Mario_Animation
                 _spriteBatch.Draw(smallMarioFrames[frame_count_mario], smallMarioDrawPosition, null, Color.White, 0f, Vector2.Zero, 3f, SpriteEffects.None, 0f);
             }
 
-
             //Goomba
             if (screen == Screen.MarioGoomba)
             {
                 _spriteBatch.Draw(goombaFrames[frame_count_goomba], goombaPosition, null, Color.White, 0f, Vector2.Zero, 0.3f, SpriteEffects.None, 0f);
             }
 
-            //Game Over
+            //Game over screen
             if (screen == Screen.End)
             {
                 _spriteBatch.Draw(gameOverTexture, gameOverRect, Color.White);
             }
 
-            _spriteBatch.DrawString(retroFont, "Press enter to start!", new Vector2(250, 550), Color.White);
+           
             _spriteBatch.End();
 
             base.Draw(gameTime);
